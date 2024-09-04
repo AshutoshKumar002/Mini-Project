@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Recognition System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
+        body { 
+            font-family: 'DM Serif Display', serif; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            background-color: #f0f0f0; 
+        }
+        .container { 
+            text-align: center; 
+        }
+        h1 { 
+            color: #333; 
+        }
+        button { 
+            padding: 10px 20px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            margin-top: 10px; 
+        }
+        #startBtn, #stopBtn { 
+            background-color: #4CAF50; 
+            color: #fff; 
+            border: none; 
+            font-family: 'DM Serif Display', serif; 
+        }
+        #recordBox { 
+            margin-top: 20px; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            width: 90%; 
+            max-width: 600px; 
+            height: 60vh; 
+            max-height: 400px; 
+            margin: 20px auto; 
+            overflow-y: scroll; 
+            overflow-x: scroll; 
+            font-size: 4vw; 
+        }
+        @keyframes typewriter { 
+            from { width: 0; } 
+            to { width: 100%; } 
+        }
+        .typewriter-text { 
+            display: inline-block; 
+            white-space: nowrap; 
+            animation: typewriter 5s steps(40) 1s 1 normal both; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Voice Recognition System</h1>
+        <div id="recordBox"></div>
+        <button id="startBtn">Start Recognition</button>
+        <button id="stopBtn">Stop Recognition</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const recordBox = document.getElementById('recordBox');
+            let recognition;
+
+            startBtn.addEventListener('click', startRecognition);
+            stopBtn.addEventListener('click', stopRecognition);
+
+            function startRecognition() {
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.lang = 'en-US';
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    appendToRecordBox(` ${transcript}`);
+                };
+
+                recognition.start();
+            }
+
+            function stopRecognition() {
+                if (recognition) {
+                    recognition.stop();
+                }
+            }
+
+            function appendToRecordBox(text) {
+                const span = document.createElement('span');
+                span.textContent = text;
+                span.classList.add('typewriter-text');
+                recordBox.appendChild(span);
+
+                recordBox.scrollLeft = recordBox.scrollWidth;
+            }
+        });
+    </script>
+</body>
+</html>
